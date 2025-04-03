@@ -19,7 +19,7 @@ namespace ApiRestFerreteria.Controllers
             }
             catch (System.Exception err)
             {
-                throw err;
+                throw;
             }
         }
     }
