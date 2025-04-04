@@ -8,13 +8,10 @@ namespace ApiRestFerreteria.Models
 {
     public class Roles
     {
-        [Key]
         public byte IdRol { get; set; }
 
-        [Required]
         public string Nombre { get; set; }
 
-        [Required]
         public decimal Sueldo { get; set; }
     }
 }

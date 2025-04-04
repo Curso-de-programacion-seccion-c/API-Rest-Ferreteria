@@ -6,21 +6,22 @@ namespace ApiRestFerreteria.Controllers
 {
     public class RolesController : ApiController
     {
-        private readonly AppDbContext _context = new AppDbContext();
+
+        private readonly Data.RolesRepository _repo = new Data.RolesRepository();
 
         // GET: api/Roles
         [HttpGet]
+        [Route("api/roles")]
         public IHttpActionResult GetRoles()
         {
-            try
+            var roles = _repo.GetRoles();
+
+            if (roles == null || !roles.Any())
             {
-                var roles = _context.Roles.ToList();
-                return Ok(roles);
+                return NotFound();
             }
-            catch (System.Exception err)
-            {
-                throw;
-            }
+
+            return Ok(roles);
         }
     }
 }
