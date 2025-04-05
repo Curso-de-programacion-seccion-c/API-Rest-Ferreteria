@@ -1,6 +1,6 @@
-﻿namespace ApiRestFerreteria.Rol
+namespace ApiRestFerreteria.Rol
 {
-    public class csEstructuraRoles
+    public class csEstructuraRol
     {
 
         public class requestRol
