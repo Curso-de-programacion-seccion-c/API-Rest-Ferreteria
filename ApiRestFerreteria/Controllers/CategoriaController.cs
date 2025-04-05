@@ -44,7 +44,7 @@ namespace ApiRestFerreteria.Controllers
 
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/findCategoria")]
-        public IHttpActionResult GetCategoria([FromBody ] Models.Categoria categoria)
+        public IHttpActionResult GetCategoria([FromBody] Models.Categoria categoria)
         {
             if (categoria == null)
             {
