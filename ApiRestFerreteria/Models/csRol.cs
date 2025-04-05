@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -13,9 +13,9 @@ namespace ApiRestFerreteria.Rol
         public csRol() { }
 
         // Insertar nuevo rol
-        public csEstructuraRoles.responseRol insertarRol(string Nombre, decimal Sueldo)
+        public csEstructuraRol.responseRol insertarRol(string Nombre, decimal Sueldo)
         {
-            csEstructuraRoles.responseRol result = new csEstructuraRoles.responseRol();
+            csEstructuraRol.responseRol result = new csEstructuraRol.responseRol();
 
             using (SqlConnection con = new SqlConnection(conexion))
             {
@@ -48,9 +48,9 @@ namespace ApiRestFerreteria.Rol
         }
 
         // Obtener todos los roles
-        public List<csEstructuraRoles.RolData> obtenerRoles()
+        public List<csEstructuraRol.RolData> obtenerRoles()
         {
-            List<csEstructuraRoles.RolData> lista = new List<csEstructuraRoles.RolData>();
+            List<csEstructuraRol.RolData> lista = new List<csEstructuraRol.RolData>();
 
             using (SqlConnection con = new SqlConnection(conexion))
             {
@@ -60,7 +60,7 @@ namespace ApiRestFerreteria.Rol
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    lista.Add(new csEstructuraRoles.RolData
+                    lista.Add(new csEstructuraRol.RolData
                     {
                         IdRol = Convert.ToInt32(reader["IdRol"]),
                         Nombre = reader["Nombre"].ToString(),
@@ -73,9 +73,9 @@ namespace ApiRestFerreteria.Rol
         }
 
         // Obtener un rol por su ID
-        public csEstructuraRoles.RolData obtenerRolPorId(int id)
+        public csEstructuraRol.RolData obtenerRolPorId(int id)
         {
-            csEstructuraRoles.RolData rol = null;
+            csEstructuraRol.RolData rol = null;
 
             using (SqlConnection con = new SqlConnection(conexion))
             {
@@ -86,7 +86,7 @@ namespace ApiRestFerreteria.Rol
                 SqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    rol = new csEstructuraRoles.RolData
+                    rol = new csEstructuraRol.RolData
                     {
                         IdRol = Convert.ToInt32(reader["IdRol"]),
                         Nombre = reader["Nombre"].ToString(),
@@ -99,9 +99,9 @@ namespace ApiRestFerreteria.Rol
         }
 
         // Actualizar un rol existente
-        public csEstructuraRoles.responseRol actualizarRol(int id, string nombre, decimal sueldo)
+        public csEstructuraRol.responseRol actualizarRol(int id, string nombre, decimal sueldo)
         {
-            csEstructuraRoles.responseRol result = new csEstructuraRoles.responseRol();
+            csEstructuraRol.responseRol result = new csEstructuraRol.responseRol();
 
             using (SqlConnection con = new SqlConnection(conexion))
             {
@@ -130,9 +130,9 @@ namespace ApiRestFerreteria.Rol
         }
 
         // Eliminar un rol
-        public csEstructuraRoles.responseRol eliminarRol(int id)
+        public csEstructuraRol.responseRol eliminarRol(int id)
         {
-            csEstructuraRoles.responseRol result = new csEstructuraRoles.responseRol();
+            csEstructuraRol.responseRol result = new csEstructuraRol.responseRol();
 
             using (SqlConnection con = new SqlConnection(conexion))
             {
