@@ -8,7 +8,7 @@ namespace ApiRestFerreteria.Rol
 {
     public class csRol
     {
-        private readonly string conexion = ConfigurationManager.ConnectionStrings["cnConection"].ConnectionString;
+        private readonly string conexion = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public csRol() { }
 

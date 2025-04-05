@@ -7,7 +7,7 @@ namespace ApiRestFerreteria.Proveedor
 {
     public class csProveedor
     {
-        private string conexion = ConfigurationManager.ConnectionStrings["cnConection"].ConnectionString;
+        private string conexion = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         // Crear un nuevo proveedor
         public csEstructuraProveedor.responseProveedor insertarProveedor(string nombreProveedor, string telefono, string nombreContacto)

@@ -142,6 +142,10 @@
     </Compile>
     <Compile Include="Models\ApiResponse.cs" />
     <Compile Include="Models\Categoria.cs" />
+    <Compile Include="Models\csEstructuraProveedor.cs" />
+    <Compile Include="Models\csEstructuraRol.cs" />
+    <Compile Include="Models\csProveedor.cs" />
+    <Compile Include="Models\csRol.cs" />
     <Compile Include="Models\Roles.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
