@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using ApiRestFerreteria.Models;
 
 namespace ApiRestFerreteria.Rol
 {
@@ -13,6 +14,7 @@ namespace ApiRestFerreteria.Rol
         public csRol() { }
 
         // Insertar nuevo rol
+        //Models.csEstructuraRoles.responseRol
         public csEstructuraRol.responseRol insertarRol(string Nombre, decimal Sueldo)
         {
             csEstructuraRol.responseRol result = new csEstructuraRol.responseRol();
@@ -30,10 +32,11 @@ namespace ApiRestFerreteria.Rol
                     cmd.Parameters.AddWithValue("@Nombre", Nombre);
                     cmd.Parameters.AddWithValue("@Sueldo", Sueldo);
 
-                    var resultId = cmd.ExecuteScalar();
+                    // TODO EL EXECUTE SCALAR NO ESTA RETORNANDO NINGUN ID
+                    var resultId = cmd.ExecuteNonQuery();
 
-                    result.respuesta = resultId != null ? Convert.ToInt32(resultId) : 0;
-                    result.descripcion_respuesta = resultId != null
+                    result.respuesta = resultId;
+                    result.descripcion_respuesta = resultId > 0
                         ? "Rol insertado exitosamente"
                         : "No se pudo insertar el rol";
                 }

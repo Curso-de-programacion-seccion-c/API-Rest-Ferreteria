@@ -1,4 +1,4 @@
-namespace ApiRestFerreteria.Rol
+namespace ApiRestFerreteria.Models
 {
     public class csEstructuraRol
     {

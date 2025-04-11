@@ -1,4 +1,5 @@
 using System.Web.Http;
+using ApiRestFerreteria.Models;
 using ApiRestFerreteria.Rol;
 
 namespace ApiRestFerreteria.Controllers
