@@ -31,18 +31,20 @@ namespace ApiRestFerreteria.Data
                         {
                             while (reader.Read())
                             {
-                                empleados.Add(new EmpleadoDB
-                                {
-                                    idEmpleado = reader.GetByte(0),
-                                    Dpi = reader.GetString(1),
-                                    Nombre = reader.GetString(2),
-                                    Apellido = reader.GetString(3),
-                                    Puesto = reader.GetString(4),
-                                    CorreoElectronico = reader.GetString(5),
-                                    Telefono = reader.GetString(6),
+                                EmpleadoDB empleadoDB = new EmpleadoDB();
+                                empleadoDB.idEmpleado = reader.GetInt16(0);
+                                empleadoDB.Dpi = reader.GetString(1);
+                                empleadoDB.Nombre = reader.GetString(2);
+                                empleadoDB.Apellido = reader.GetString(3);
+                                empleadoDB.Puesto = reader.GetString(4);
+                                empleadoDB.CorreoElectronico = reader.GetString(5);
+                                empleadoDB.Telefono = reader.GetString(6);
+                                empleadoDB.FechaContratacion = reader.GetDateTime(7).ToString("yyyy-MM-dd");
+                                empleadoDB.IdRol = reader.GetByte(8);
+                                empleadoDB.nombreRol = reader.GetString(9);
+                                empleadoDB.Sueldo = reader.GetDecimal(10);
 
-              
-                                });
+                                empleados.Add(empleadoDB);
                             }
                         }
                     }
@@ -94,15 +96,17 @@ namespace ApiRestFerreteria.Data
                         {
                             empleado = new EmpleadoDB
                             {
-                                idEmpleado = reader.GetByte(0),
+                                idEmpleado = reader.GetInt16(0),
                                 Dpi = reader.GetString(1),
                                 Nombre = reader.GetString(2),
                                 Apellido = reader.GetString(3),
                                 Puesto = reader.GetString(4),
                                 CorreoElectronico = reader.GetString(5),
-                                Telefono = reader.GetString(6)
-                                //IdRol = reader.GetByte(7),
-                                //FechaContratacion = reader.GetDateTime(8)
+                                Telefono = reader.GetString(6),
+                                FechaContratacion = reader.GetDateTime(7).ToString("yyyy-MM-dd"),
+                                IdRol = reader.GetByte(8),
+                                nombreRol = reader.GetString(9),
+                                Sueldo = reader.GetDecimal(10)
                             };
                         }
                     }
@@ -136,7 +140,7 @@ namespace ApiRestFerreteria.Data
             }
         }
 
-        public ApiResponse<string> CrearEmpleado(EmpleadoDB empleado)
+        public ApiResponse<string> CrearEmpleado(CrearEmpleado empleado)
         {
             try
             {
@@ -150,8 +154,8 @@ namespace ApiRestFerreteria.Data
                     cmd.Parameters.AddWithValue("@Puesto", empleado.Puesto);
                     cmd.Parameters.AddWithValue("@CorreoElectronico", empleado.CorreoElectronico);
                     cmd.Parameters.AddWithValue("@Telefono", empleado.Telefono);
-                    //cmd.Parameters.AddWithValue("@IdRol", empleado.IdRol);
-                    //cmd.Parameters.AddWithValue("@FechaContratacion", empleado.FechaContratacion);
+                    cmd.Parameters.AddWithValue("@IdRol", empleado.IdRol);
+                    cmd.Parameters.AddWithValue("@FechaContratacion", empleado.FechaContratacion);
 
                     conn.Open();
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -200,8 +204,8 @@ namespace ApiRestFerreteria.Data
                     cmd.Parameters.AddWithValue("@Puesto", empleado.Puesto);
                     cmd.Parameters.AddWithValue("@CorreoElectronico", empleado.CorreoElectronico);
                     cmd.Parameters.AddWithValue("@Telefono", empleado.Telefono);
-                    //cmd.Parameters.AddWithValue("@IdRol", empleado.IdRol);
-                    //cmd.Parameters.AddWithValue("@FechaContratacion", empleado.FechaContratacion);
+                    cmd.Parameters.AddWithValue("@IdRol", empleado.IdRol);
+                    cmd.Parameters.AddWithValue("@FechaContratacion", empleado.FechaContratacion);
 
                     conn.Open();
                     int rowsAffected = cmd.ExecuteNonQuery();
