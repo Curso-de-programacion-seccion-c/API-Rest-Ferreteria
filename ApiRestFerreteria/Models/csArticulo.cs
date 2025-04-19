@@ -61,18 +61,18 @@ namespace ApiRestFerreteria.Articulo
             return result;
         }
 
-        public csEstructuraArticulo.responseArticulo actualizarArticulo(int idArticulo, string nombreArticulo, decimal precio, int stock)
+        public csEstructuraArticulo.responseArticulo actualizarArticulo(short codeArticulo, string nombreArticulo, decimal precio, int stock)
         {
             var result = new csEstructuraArticulo.responseArticulo();
             using (SqlConnection con = new SqlConnection(conexion))
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("ActualizarArticulo", con);
+                    SqlCommand cmd = new SqlCommand("ModificarArticulo", con);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@IdArticulo", idArticulo);
-                    cmd.Parameters.AddWithValue("@NombreArticulo", nombreArticulo);
-                    cmd.Parameters.AddWithValue("@Precio", precio);
+                    cmd.Parameters.AddWithValue("@CodeArticulo", codeArticulo);
+                    cmd.Parameters.AddWithValue("@Nombre", nombreArticulo);
+                    cmd.Parameters.AddWithValue("@PrecioUnitario", precio);
                     cmd.Parameters.AddWithValue("@Stock", stock);
 
                     con.Open();
@@ -90,7 +90,7 @@ namespace ApiRestFerreteria.Articulo
             return result;
         }
 
-        public csEstructuraArticulo.responseArticulo eliminarArticulo(int idArticulo)
+        public csEstructuraArticulo.responseArticulo eliminarArticulo(short codeArticulo)
         {
             var result = new csEstructuraArticulo.responseArticulo();
             using (SqlConnection con = new SqlConnection(conexion))
@@ -99,7 +99,7 @@ namespace ApiRestFerreteria.Articulo
                 {
                     SqlCommand cmd = new SqlCommand("EliminarArticulo", con);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@IdArticulo", idArticulo);
+                    cmd.Parameters.AddWithValue("@CodeArticulo", codeArticulo); 
 
                     con.Open();
                     int rowsAffected = cmd.ExecuteNonQuery();
