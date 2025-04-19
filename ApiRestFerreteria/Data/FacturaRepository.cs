@@ -172,11 +172,11 @@ namespace ApiRestFerreteria.Data
                         while (reader.Read())
                         {
                             facturaResponse.idFactura = reader.GetInt16(0);
-                            factura.idEmpleado = reader.GetInt16(1);
-                            factura.idCliente = reader.GetInt16(2);
-                            factura.fecha = reader.GetDateTime(3);
-                            factura.Total_Pago = reader.GetDecimal(4);
-                            factura.idFormaPago = reader.GetByte(5);
+                            facturaResponse.idEmpleado = reader.GetInt16(1);
+                            facturaResponse.idCliente = reader.GetInt16(2);
+                            facturaResponse.fecha = reader.GetDateTime(3);
+                            facturaResponse.Total_Pago = reader.GetDecimal(4);
+                            facturaResponse.idFormaPago = reader.GetByte(5);
                         }
                     }
                 }
