@@ -73,7 +73,7 @@ namespace ApiRestFerreteria.Controllers
 
         [System.Web.Http.HttpPost]
         [System.Web.Http.Route("api/empleados")]
-        public IHttpActionResult PostEmpleado([FromBody] EmpleadoDB empleado)
+        public IHttpActionResult PostEmpleado([FromBody] CrearEmpleado empleado)
         {
             if (empleado == null)
             {
