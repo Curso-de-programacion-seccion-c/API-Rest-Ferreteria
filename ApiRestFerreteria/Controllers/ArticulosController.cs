@@ -11,13 +11,16 @@ namespace ApiRestFerreteria.Controllers
         [Route("rest/api/crearArticulo")]
         public IHttpActionResult crearArticulo([FromBody] csEstructuraArticulo.requestArticulo model)
         {
-            var response = articuloService.insertarArticulo(model.NombreArticulo, model.Precio, model.Stock, model.IdCategoria, model.IdProveedor);
+            var response = articuloService.insertarArticulo(model.CodeArticulo,
+                model.NombreArticulo, model.Precio, model.Stock, model.Descripcion, model.IdCategoria, model.IdProveedor);
+
             if (response.respuesta == 0)
             {
                 return BadRequest(response.descripcion_respuesta);
             }
             return Ok(response);
         }
+
 
         [HttpGet]
         [Route("rest/api/obtenerArticulos")]
@@ -30,44 +33,56 @@ namespace ApiRestFerreteria.Controllers
             }
             return Ok(response);
         }
-
-        [HttpPut]
-        [Route("rest/api/actualizarArticulo/{codeArticulo}")]
-        public IHttpActionResult actualizarArticulo(string codeArticulo, [FromBody] csEstructuraArticulo.requestArticulo model)
+        [HttpGet]
+        [Route("rest/api/obtenerArticuloPorId/{id}")]
+        public IHttpActionResult obtenerArticuloPorId(int id)
         {
-            if (short.TryParse(codeArticulo, out short codigo))
+            var articulo = articuloService.obtenerArticuloPorId(id);
+
+            if (articulo == null || articulo.IdArticulo == 0)
             {
-                var response = articuloService.actualizarArticulo(codigo, model.NombreArticulo, model.Precio, model.Stock);
+                return NotFound();
+            }
+
+            return Ok(articulo);
+        }
+        [HttpPut]
+        [Route("rest/api/actualizarArticulo/{idArticulo}")]
+        public IHttpActionResult actualizarArticulo(string idArticulo, [FromBody] csEstructuraArticulo.requestArticulo model)
+        {
+            if (short.TryParse(idArticulo, out short art))
+            {
+                var response = articuloService.actualizarArticulo(
+                    art,
+                    model.CodeArticulo,
+                    model.NombreArticulo,
+                    model.Precio,
+                    model.Descripcion,
+                    model.Stock,
+                    model.IdCategoria,
+                    model.IdProveedor
+                );
                 if (response.respuesta == 0)
                 {
                     return BadRequest(response.descripcion_respuesta);
                 }
-                return Ok(response);
+                return Ok(response.descripcion_respuesta);
             }
             else
             {
-                return BadRequest("El CodeArticulo debe ser un número entero válido.");
+                return BadRequest("Por favor, vuelva a intentarlo con un número válido");
             }
         }
 
+
         [HttpDelete]
-        [Route("rest/api/eliminarArticulo/{codeArticulo}")]
-        public IHttpActionResult eliminarArticulo(string codeArticulo)
+        [Route("rest/api/eliminarArticulo/{id}")]
+        public IHttpActionResult eliminarArticulo(int id)
         {
-            if (short.TryParse(codeArticulo, out short codigo))
-            {
-                var response = articuloService.eliminarArticulo(codigo);
-                if (response.respuesta == 0)
-                {
-                    return NotFound();
-                }
-                return Ok(response);
-            }
-            else
-            {
-                return BadRequest("El CodeArticulo debe ser un número entero válido.");
-            }
+            var response = articuloService.eliminarArticulo(id);
+            return Ok(response);
         }
+
 
     }
 }

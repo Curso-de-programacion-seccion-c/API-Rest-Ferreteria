@@ -7,9 +7,13 @@ namespace ApiRestFerreteria.Articulo
     {
         public class requestArticulo
         {
+            public int IdArticulo { get; set; }
+            public int CodeArticulo { get; set; }
+
             public string NombreArticulo { get; set; }
             public decimal Precio { get; set; }
             public int Stock { get; set; }
+            public string Descripcion { get; set; }
             public int IdCategoria { get; set; }
             public int IdProveedor { get; set; }
         }
@@ -23,10 +27,13 @@ namespace ApiRestFerreteria.Articulo
         public class articulo
         {
             public int IdArticulo { get; set; }
+            public int CodeArticulo { get; set; }
             public string NombreArticulo { get; set; }
             public decimal Precio { get; set; }
             public int Stock { get; set; }
+            public string Descripcion { get; set; } 
         }
+
 
         public class responseAllArticulos
         {

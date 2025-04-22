@@ -2,6 +2,8 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using ApiRestFerreteria.Models;
+using System.Web.Http.Results;
 
 namespace ApiRestFerreteria.Articulo
 {
@@ -9,7 +11,8 @@ namespace ApiRestFerreteria.Articulo
     {
         private string conexion = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
-        public csEstructuraArticulo.responseArticulo insertarArticulo(string nombreArticulo, decimal precio, int stock, int idCategoria, int idProveedor)
+        public csEstructuraArticulo.responseArticulo insertarArticulo( int codeArticulo,
+     string nombreArticulo, decimal precio, int stock, string descripcion, int idCategoria, int idProveedor)
         {
             var result = new csEstructuraArticulo.responseArticulo();
             using (SqlConnection con = new SqlConnection(conexion))
@@ -18,9 +21,11 @@ namespace ApiRestFerreteria.Articulo
                 {
                     SqlCommand cmd = new SqlCommand("InsertarArticulo", con);
                     cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@CodeArticulo", codeArticulo);
                     cmd.Parameters.AddWithValue("@NombreArticulo", nombreArticulo);
                     cmd.Parameters.AddWithValue("@Precio", precio);
                     cmd.Parameters.AddWithValue("@Stock", stock);
+                    cmd.Parameters.AddWithValue("@Descripcion", descripcion);
                     cmd.Parameters.AddWithValue("@IdCategoria", idCategoria);
                     cmd.Parameters.AddWithValue("@IdProveedor", idProveedor);
 
@@ -38,6 +43,8 @@ namespace ApiRestFerreteria.Articulo
             }
             return result;
         }
+
+
 
         public csEstructuraArticulo.responseArticulo obtenerArticulos()
         {
@@ -61,25 +68,42 @@ namespace ApiRestFerreteria.Articulo
             return result;
         }
 
-        public csEstructuraArticulo.responseArticulo actualizarArticulo(short codeArticulo, string nombreArticulo, decimal precio, int stock)
+        //Captura lo que el sp devuelve como resultado explicito
+        public csEstructuraArticulo.responseArticulo actualizarArticulo(
+        int idArticulo,int codeArticulo, string nombreArticulo,decimal precio, string descripcion,int stock, int idCategoria,int idProveedor)
         {
             var result = new csEstructuraArticulo.responseArticulo();
+
             using (SqlConnection con = new SqlConnection(conexion))
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("ModificarArticulo", con);
+                    SqlCommand cmd = new SqlCommand("ActualizarArticulo", con);
                     cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@IdArticulo", idArticulo);
                     cmd.Parameters.AddWithValue("@CodeArticulo", codeArticulo);
-                    cmd.Parameters.AddWithValue("@Nombre", nombreArticulo);
-                    cmd.Parameters.AddWithValue("@PrecioUnitario", precio);
+                    cmd.Parameters.AddWithValue("@NombreArticulo", nombreArticulo);
+                    cmd.Parameters.AddWithValue("@Precio", precio);
                     cmd.Parameters.AddWithValue("@Stock", stock);
+                    cmd.Parameters.AddWithValue("@Descripcion", descripcion);
+                    cmd.Parameters.AddWithValue("@IdCategoria", idCategoria);
+                    cmd.Parameters.AddWithValue("@IdProveedor", idProveedor);
 
                     con.Open();
-                    int rowsAffected = cmd.ExecuteNonQuery();
 
-                    result.respuesta = rowsAffected > 0 ? 1 : 0;
-                    result.descripcion_respuesta = rowsAffected > 0 ? "Artículo actualizado exitosamente" : "No se actualizó el artículo";
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            result.respuesta = Convert.ToInt32(reader["Resultado"]);
+                            result.descripcion_respuesta = reader["Mensaje"].ToString();
+                        }
+                        else
+                        {
+                            result.respuesta = 0;
+                            result.descripcion_respuesta = "No se obtuvo respuesta del procedimiento.";
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -87,10 +111,12 @@ namespace ApiRestFerreteria.Articulo
                     result.descripcion_respuesta = "Ocurrió un error: " + ex.Message;
                 }
             }
+
             return result;
         }
 
-        public csEstructuraArticulo.responseArticulo eliminarArticulo(short codeArticulo)
+
+        public csEstructuraArticulo.responseArticulo eliminarArticulo(int idArticulo)
         {
             var result = new csEstructuraArticulo.responseArticulo();
             using (SqlConnection con = new SqlConnection(conexion))
@@ -99,13 +125,13 @@ namespace ApiRestFerreteria.Articulo
                 {
                     SqlCommand cmd = new SqlCommand("EliminarArticulo", con);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@CodeArticulo", codeArticulo); 
+                    cmd.Parameters.AddWithValue("@IdArticulo", idArticulo); 
 
                     con.Open();
-                    int rowsAffected = cmd.ExecuteNonQuery();
+                    cmd.ExecuteNonQuery();
 
-                    result.respuesta = rowsAffected > 0 ? 1 : 0;
-                    result.descripcion_respuesta = rowsAffected > 0 ? "Artículo eliminado exitosamente" : "No se eliminó el artículo";
+                    result.respuesta = 1;
+                    result.descripcion_respuesta = "Artículo eliminado exitosamente";
                 }
                 catch (Exception ex)
                 {
@@ -115,5 +141,38 @@ namespace ApiRestFerreteria.Articulo
             }
             return result;
         }
+        public csEstructuraArticulo.articulo obtenerArticuloPorId(int idArticulo)
+        {
+            var art = new csEstructuraArticulo.articulo();
+            using (SqlConnection con = new SqlConnection(conexion))
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("ObtenerArticuloPorId", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@IdArticulo", idArticulo);
+
+                    con.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        art.IdArticulo = Convert.ToInt32(reader["IdArticulo"]);
+                        art.CodeArticulo = Convert.ToInt32(reader["CodeArticulo"]); 
+                        art.NombreArticulo = reader["Nombre"].ToString();
+                        art.Precio = Convert.ToDecimal(reader["PrecioUnitario"]);
+                        art.Stock = Convert.ToInt32(reader["Stock"]);
+                        art.Descripcion = reader["Descripcion"].ToString();
+                    }
+                }
+                catch (Exception ex)
+                {
+              
+                }
+            }
+
+            return art;
+        }
+
     }
 }
