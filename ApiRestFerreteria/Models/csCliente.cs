@@ -8,7 +8,7 @@ namespace ApiRestFerreteria.Cliente
 {
     public class csCliente
     {
-        private readonly string conexion = ConfigurationManager.ConnectionStrings["cnConection"].ConnectionString;
+        private readonly string conexion = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public csCliente() { }
 
@@ -21,7 +21,7 @@ namespace ApiRestFerreteria.Cliente
                 try
                 {
                     con.Open();
-                    SqlCommand cmd = new SqlCommand("InsertarCliente", con)
+                    SqlCommand cmd = new SqlCommand("CreateCliente", con)
                     {
                         CommandType = CommandType.StoredProcedure
                     };

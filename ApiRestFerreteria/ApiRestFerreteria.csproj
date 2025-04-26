@@ -134,6 +134,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ArticulosController.cs" />
     <Compile Include="Controllers\CategoriaController.cs" />
+    <Compile Include="Controllers\ClientesController.cs" />
     <Compile Include="Controllers\EmpleadoController.cs" />
     <Compile Include="Controllers\FormaPagoController.cs" />
     <Compile Include="Controllers\DetalleVentaController.cs" />
@@ -153,14 +154,16 @@
     <Compile Include="Models\ApiResponse.cs" />
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\csArticulo.cs" />
+    <Compile Include="Models\csCliente.cs" />
     <Compile Include="Models\csEstructuraArticulo.cs" />
-    <Compile Include="Models\csEstructuraProveedor.cs" />
+    <Compile Include="Models\csEstructuraCliente.cs" />
     <Compile Include="Models\csEstructuraRol.cs" />
     <Compile Include="Models\csProveedor.cs" />
     <Compile Include="Models\Empleado.cs" />
     <Compile Include="Models\FormaPago.cs" />
     <Compile Include="Models\DetalleVenta.cs" />
     <Compile Include="Models\Factura.cs" />
+    <Compile Include="Models\Proveedor.cs" />
     <Compile Include="Models\Roles.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -2,6 +2,8 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using ApiRestFerreteria.Models;
+using System.Collections.Generic;
 
 namespace ApiRestFerreteria.Proveedor
 {
@@ -9,174 +11,286 @@ namespace ApiRestFerreteria.Proveedor
     {
         private string conexion = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
-        // Crear un nuevo proveedor
-        public csEstructuraProveedor.responseProveedor insertarProveedor(string nombreProveedor, string telefono, string nombreContacto)
+        // Obtener todos los proveedores
+        public ApiResponse<List<Models.Proveedor>> obtenerProveedores()
         {
-            csEstructuraProveedor.responseProveedor result = new csEstructuraProveedor.responseProveedor();
-            using (SqlConnection con = new SqlConnection(conexion))
+            try
             {
-                try
+                List<Models.Proveedor> proveedors = new List<Models.Proveedor>();
+                using (var conn = new SqlConnection(conexion))
+                using (var cmd = new SqlCommand("ObtenerProveedores", conn))
                 {
-                    SqlCommand cmd = new SqlCommand("InsertarProveedor", con);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@NombreProveedor", nombreProveedor);
-                    cmd.Parameters.AddWithValue("@Telefono", telefono);
-                    cmd.Parameters.AddWithValue("@NombreContacto", nombreContacto);
+                    conn.Open();
 
-                    con.Open();
-                    var resultId = cmd.ExecuteScalar();
-
-                    if (resultId != null)
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        result.respuesta = Convert.ToInt32(resultId);
-                        result.descripcion_respuesta = "Proveedor creado exitosamente";
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                proveedors.Add(new Models.Proveedor
+                                {
+                                    IdProveedor = reader.GetByte(0),
+                                    NombreProveedor = reader.GetString(1),
+                                    Telefono = reader.GetString(2),
+                                    NombreContacto = reader.GetString(3)
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (proveedors.Count <= 0)
+                {
+                    return new ApiResponse<List<Models.Proveedor>>
+                    {
+                        StatusCode = 404,
+                        Message = "No se encontraron proveedores",
+                        data = null
+                    };
+                }
+
+                return new ApiResponse<List<Models.Proveedor>>
+                {
+                    StatusCode = 200,
+                    Message = "Proveedores encontrados",
+                    data = proveedors
+                };
+            }
+            catch (Exception SqlEx)
+            {
+                return new ApiResponse<List<Models.Proveedor>>
+                {
+                    StatusCode = 400,
+                    Message = SqlEx.Message,
+                    data = null
+                };
+            }
+        }
+
+        // Obtener proveedor por id
+        public ApiResponse<Models.Proveedor> obtenerProveedor(int idProveedor)
+        {
+            try
+            {
+                Models.Proveedor proveedor = new Models.Proveedor();
+                using (var conn = new SqlConnection(conexion))
+                using (var cmd = new SqlCommand("SpObtenerProveedor", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@IdProveedor", idProveedor);
+                    conn.Open();
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                proveedor.IdProveedor = reader.GetByte(0);
+                                proveedor.NombreProveedor = reader.GetString(1);
+                                proveedor.Telefono = reader.GetString(2);
+                                proveedor.NombreContacto = reader.GetString(3);
+                            }
+                        }
+                    }
+                }
+
+                if (proveedor.IdProveedor == 0)
+                {
+                    return new ApiResponse<Models.Proveedor>
+                    {
+                        StatusCode = 404,
+                        Message = "No se encontró el proveedor",
+                        data = null
+                    };
+                }
+
+                return new ApiResponse<Models.Proveedor>
+                {
+                    StatusCode = 200,
+                    Message = "Proveedor encontrado",
+                    data = proveedor
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<Models.Proveedor>
+                {
+                    StatusCode = 400,
+                    Message = ex.Message,
+                    data = null
+                };
+            }
+        }
+
+        // Crear un nuevo proveedor
+        public ApiResponse<string> CrearProveedor(Models.Proveedor proveedor)
+        {
+            try
+            {
+                using(var conn = new SqlConnection(conexion))
+                using(var cmd = new SqlCommand("InsertarProveedor", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@NombreProveedor", proveedor.NombreProveedor);
+                    cmd.Parameters.AddWithValue("@Telefono", proveedor.Telefono);
+                    cmd.Parameters.AddWithValue("@NombreContacto", proveedor.NombreContacto);
+
+                    conn.Open();
+                    var rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return new ApiResponse<string>
+                        {
+                            StatusCode = 200,
+                            Message = "Proveedor creado exitosamente",
+                            data = null
+                        };
                     }
                     else
                     {
-                        result.respuesta = 0;
-                        result.descripcion_respuesta = "Error al insertar el proveedor";
+                        return new ApiResponse<string>
+                        {
+                            StatusCode = 400,
+                            Message = "Error al crear el proveedor",
+                            data = null
+                        };
                     }
                 }
-                catch (Exception ex)
-                {
-                    result.respuesta = 0;
-                    result.descripcion_respuesta = "Ocurrió un error: " + ex.Message;
-                }
             }
-            return result;
-        }
-
-        // Obtener todos los proveedores
-        public csEstructuraProveedor.responseProveedor obtenerProveedores()
-        {
-            csEstructuraProveedor.responseProveedor result = new csEstructuraProveedor.responseProveedor();
-            using (SqlConnection con = new SqlConnection(conexion))
+            catch (SqlException sqlEX)
             {
-                try
+                return new ApiResponse<string>
                 {
-                    SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Proveedor WHERE IsActive = 1", con);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-                    result.respuesta = dt.Rows.Count;
-                    result.descripcion_respuesta = "Proveedores obtenidos exitosamente";
-                  
-                }
-                catch (Exception ex)
-                {
-                    result.respuesta = 0;
-                    result.descripcion_respuesta = "Ocurrió un error: " + ex.Message;
-                }
+                    StatusCode = 400,
+                    Message = sqlEX.Message,
+                    data = null
+                };
             }
-            return result;
+            catch (Exception ex)
+            {
+                return new ApiResponse<string>
+                {
+                    StatusCode = 500,
+                    Message = "Error al crear el proveedor: " + ex.Message,
+                    data = null
+                };
+            }
         }
 
         // Actualizar un proveedor
-        public csEstructuraProveedor.responseProveedor actualizarProveedor(int idProveedor, string nombreProveedor, string telefono, string nombreContacto)
+        public ApiResponse<string> ActualizarProveedor(Models.Proveedor proveedor)
         {
-            csEstructuraProveedor.responseProveedor result = new csEstructuraProveedor.responseProveedor();
-            using (SqlConnection con = new SqlConnection(conexion))
+            try
             {
-                try
+                using(var conn = new SqlConnection(conexion))
+                using(var cmd = new SqlCommand("ActualizarProveedor", conn))
                 {
-                    SqlCommand cmd = new SqlCommand("ActualizarProveedor", con);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@IdProveedor", idProveedor);
-                    cmd.Parameters.AddWithValue("@NombreProveedor", nombreProveedor);
-                    cmd.Parameters.AddWithValue("@Telefono", telefono);
-                    cmd.Parameters.AddWithValue("@NombreContacto", nombreContacto);
+                    cmd.Parameters.AddWithValue("@IdProveedor", proveedor.IdProveedor);
+                    cmd.Parameters.AddWithValue("@NombreProveedor", proveedor.NombreProveedor);
+                    cmd.Parameters.AddWithValue("@Telefono", proveedor.Telefono);
+                    cmd.Parameters.AddWithValue("@NombreContacto", proveedor.NombreContacto);
 
-                    con.Open();
+                    conn.Open();
                     var rowsAffected = cmd.ExecuteNonQuery();
 
                     if (rowsAffected > 0)
                     {
-                        result.respuesta = 1;
-                        result.descripcion_respuesta = "Proveedor actualizado exitosamente";
+                        return new ApiResponse<string>
+                        {
+                            StatusCode = 200,
+                            Message = "Proveedor actualizado exitosamente",
+                            data = null
+                        };
                     }
                     else
                     {
-                        result.respuesta = 0;
-                        result.descripcion_respuesta = "No se encontró el proveedor o no se actualizó";
+                        return new ApiResponse<string>
+                        {
+                            StatusCode = 400,
+                            Message = "Error al actualizar el proveedor",
+                            data = null
+                        };
                     }
-                }
-                catch (Exception ex)
-                {
-                    result.respuesta = 0;
-                    result.descripcion_respuesta = "Ocurrió un error: " + ex.Message;
+
                 }
             }
-            return result;
+            catch (SqlException sqlEx)
+            {
+                return new ApiResponse<string>
+                {
+                    StatusCode = 400,
+                    Message = sqlEx.Message,
+                    data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<string>
+                {
+                    StatusCode = 500,
+                    Message = "Error al actualizar el proveedor: " + ex.Message,
+                    data = null
+                };
+            }
         }
 
         // Eliminar un proveedor
-        public csEstructuraProveedor.responseProveedor eliminarProveedor(int idProveedor)
+        public ApiResponse<bool> EliminarProveedor(int idProveedor)
         {
-            csEstructuraProveedor.responseProveedor result = new csEstructuraProveedor.responseProveedor();
-            using (SqlConnection con = new SqlConnection(conexion))
+            try
             {
-                try
+                using (var conn = new SqlConnection(conexion))
+                using (var cmd = new SqlCommand("EliminarProveedor", conn))
                 {
-                    SqlCommand cmd = new SqlCommand("EliminarProveedor", con);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@IdProveedor", idProveedor);
+                    conn.Open();
 
-                    con.Open();
                     var rowsAffected = cmd.ExecuteNonQuery();
 
                     if (rowsAffected > 0)
                     {
-                        result.respuesta = 1;
-                        result.descripcion_respuesta = "Proveedor eliminado exitosamente";
+                        return new ApiResponse<bool>
+                        {
+                            StatusCode = 200,
+                            Message = "Proveedor eliminado exitosamente",
+                            data = true
+                        };
                     }
                     else
                     {
-                        result.respuesta = 0;
-                        result.descripcion_respuesta = "No se encontró el proveedor o no se eliminó";
+                        return new ApiResponse<bool>
+                        {
+                            StatusCode = 400,
+                            Message = "Error al eliminar el proveedor",
+                            data = false
+                        };
                     }
                 }
-                catch (Exception ex)
-                {
-                    result.respuesta = 0;
-                    result.descripcion_respuesta = "Ocurrió un error: " + ex.Message;
-                }
             }
-            return result;
-        }
-
-        // Activar o desactivar proveedor
-        public csEstructuraProveedor.responseProveedor activarDesactivarProveedor(int idProveedor, bool isActive)
-        {
-            csEstructuraProveedor.responseProveedor result = new csEstructuraProveedor.responseProveedor();
-            using (SqlConnection con = new SqlConnection(conexion))
+            catch (SqlException sqlEx)
             {
-                try
+                return new ApiResponse<bool>
                 {
-                    SqlCommand cmd = new SqlCommand("ActualizarProveedorIsActive", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@IdProveedor", idProveedor);
-                    cmd.Parameters.AddWithValue("@IsActive", isActive ? 1 : 0);
-
-                    con.Open();
-                    var rowsAffected = cmd.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
-                    {
-                        result.respuesta = 1;
-                        result.descripcion_respuesta = isActive ? "Proveedor activado exitosamente" : "Proveedor desactivado exitosamente";
-                    }
-                    else
-                    {
-                        result.respuesta = 0;
-                        result.descripcion_respuesta = "No se encontró el proveedor o no se actualizó";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    result.respuesta = 0;
-                    result.descripcion_respuesta = "Ocurrió un error: " + ex.Message;
-                }
+                    StatusCode = 400,
+                    Message = sqlEx.Message,
+                    data = false
+                };
             }
-            return result;
+            catch (Exception ex)
+            {
+                return new ApiResponse<bool>
+                {
+                    StatusCode = 500,
+                    Message = "Error al eliminar el proveedor: " + ex.Message,
+                    data = false
+                };
+            }
         }
     }
 }

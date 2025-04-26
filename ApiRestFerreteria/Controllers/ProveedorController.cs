@@ -1,4 +1,6 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Net;
+using System.Web.Http;
 using ApiRestFerreteria.Proveedor;
 
 namespace ApiRestFerreteria.Controllers
@@ -10,9 +12,36 @@ namespace ApiRestFerreteria.Controllers
         // Crear proveedor
         [HttpPost]
         [Route("rest/api/crearProveedor")]
-        public IHttpActionResult crearProveedor([FromBody] ProveedorRequest model)
+        public IHttpActionResult crearProveedor([FromBody] Models.Proveedor model)
         {
-            return Ok(proveedorService.insertarProveedor(model.NombreProveedor, model.Telefono, model.NombreContacto));
+            if (model == null)
+            {
+                return BadRequest("Informacion incompleta");
+            }
+
+            var response = proveedorService.CrearProveedor(model);
+
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+            if (response.StatusCode != 200)
+            {
+                return Content((HttpStatusCode)response.StatusCode, new
+                {
+                    status = response.StatusCode,
+                    message = response.Message,
+                    result = response.data
+                });
+            }
+
+            return Ok(new
+            {
+                status = response.StatusCode,
+                message = response.Message,
+                result = response.data,
+            });
         }
 
         // Obtener proveedores
@@ -20,15 +49,112 @@ namespace ApiRestFerreteria.Controllers
         [Route("rest/api/obtenerProveedores")]
         public IHttpActionResult obtenerProveedores()
         {
-            return Ok(proveedorService.obtenerProveedores());
+            var response = proveedorService.obtenerProveedores();
+
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+            if (response.StatusCode != 200)
+            {
+                return Content((HttpStatusCode)response.StatusCode, new
+                {
+                    status = response.StatusCode,
+                    message = response.Message,
+                    result = response.data
+                });
+            }
+
+            return Ok(new
+            {
+                status = response.StatusCode,
+                message = response.Message,
+                result = response.data,
+            });
+        }
+
+        // Obtener proveedor por ID
+        [HttpGet]
+        [Route("rest/api/obtenerProveedor/{id}")]
+        public IHttpActionResult obtenerProveedor(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("ID invalido");
+            }
+
+            var response = proveedorService.obtenerProveedor(id);
+
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+            if (response.StatusCode != 200)
+            {
+                return Content((HttpStatusCode)response.StatusCode, new
+                {
+                    status = response.StatusCode,
+                    message = response.Message,
+                    result = response.data
+                });
+            }
+
+            return Ok(new
+            {
+                status = response.StatusCode,
+                message = response.Message,
+                result = response.data,
+            });
         }
 
         // Actualizar proveedor
         [HttpPut]
         [Route("rest/api/actualizarProveedor/{id}")]
-        public IHttpActionResult actualizarProveedor(int id, [FromBody] ProveedorRequest model)
+        public IHttpActionResult actualizarProveedor(int id, [FromBody] Models.Proveedor model)
         {
-            return Ok(proveedorService.actualizarProveedor(id, model.NombreProveedor, model.Telefono, model.NombreContacto));
+            if (model == null)
+            {
+                return BadRequest("Informacion incompleta");
+            }
+
+            if (id <= 0)
+            {
+                return BadRequest("ID invalido");
+            }
+
+            var modelo = new Models.Proveedor
+            {
+                IdProveedor = Convert.ToByte(id),
+                NombreProveedor = model.NombreProveedor,
+                Telefono = model.Telefono,
+                NombreContacto = model.NombreContacto
+            };
+
+            var response = proveedorService.ActualizarProveedor(modelo);
+
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+            if (response.StatusCode != 200)
+            {
+                return Content((HttpStatusCode)response.StatusCode, new
+                {
+                    status = response.StatusCode,
+                    message = response.Message,
+                    result = response.data
+                });
+            }
+
+            return Ok(new
+            {
+                status = response.StatusCode,
+                message = response.Message,
+                result = response.data,
+            });
         }
 
         // Eliminar proveedor
@@ -36,22 +162,34 @@ namespace ApiRestFerreteria.Controllers
         [Route("rest/api/eliminarProveedor/{id}")]
         public IHttpActionResult eliminarProveedor(int id)
         {
-            return Ok(proveedorService.eliminarProveedor(id));
-        }
+            if (id <= 0)
+            {
+                return BadRequest("ID invalido");
+            }
 
-        // Activar o desactivar proveedor
-        [HttpPut]
-        [Route("rest/api/activarDesactivarProveedor/{id}")]
-        public IHttpActionResult activarDesactivarProveedor(int id, [FromBody] bool isActive)
-        {
-            return Ok(proveedorService.activarDesactivarProveedor(id, isActive));
-        }
-    }
+            var response = proveedorService.EliminarProveedor(id);
 
-    public class ProveedorRequest
-    {
-        public string NombreProveedor { get; set; }
-        public string Telefono { get; set; }
-        public string NombreContacto { get; set; }
+            if (response == null)
+            {
+                return NotFound();
+            }
+
+            if (response.StatusCode != 200)
+            {
+                return Content((HttpStatusCode)response.StatusCode, new
+                {
+                    status = response.StatusCode,
+                    message = response.Message,
+                    result = response.data
+                });
+            }
+
+            return Ok(new
+            {
+                status = response.StatusCode,
+                message = response.Message,
+                result = response.data,
+            });
+        }
     }
 }
