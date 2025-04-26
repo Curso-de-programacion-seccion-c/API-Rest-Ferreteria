@@ -135,6 +135,7 @@
     <Compile Include="Controllers\ArticulosController.cs" />
     <Compile Include="Controllers\CategoriaController.cs" />
     <Compile Include="Controllers\ClientesController.cs" />
+    <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Controllers\EmpleadoController.cs" />
     <Compile Include="Controllers\FormaPagoController.cs" />
     <Compile Include="Controllers\DetalleVentaController.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="Controllers\ProveedorController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Data\CategoriaRepository.cs" />
+    <Compile Include="Data\Usuario.cs" />
     <Compile Include="Data\EmpleadoRepository.cs" />
     <Compile Include="Data\FormaPagoRepository.cs" />
     <Compile Include="Data\DetalleVentaRepository.cs" />
@@ -165,6 +167,7 @@
     <Compile Include="Models\Factura.cs" />
     <Compile Include="Models\Proveedor.cs" />
     <Compile Include="Models\Roles.cs" />
+    <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
