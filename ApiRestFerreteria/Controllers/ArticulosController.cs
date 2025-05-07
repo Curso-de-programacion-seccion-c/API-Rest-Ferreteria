@@ -27,10 +27,7 @@ namespace ApiRestFerreteria.Controllers
         public IHttpActionResult obtenerArticulos()
         {
             var response = articuloService.obtenerArticulos();
-            if (response.respuesta == 0)
-            {
-                return NotFound();
-            }
+           
             return Ok(response);
         }
         [HttpGet]

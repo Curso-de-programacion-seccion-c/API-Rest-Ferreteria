@@ -4,6 +4,8 @@ using System.Data.SqlClient;
 using System.Configuration;
 using ApiRestFerreteria.Models;
 using System.Web.Http.Results;
+using System.Collections.Generic;
+using static ApiRestFerreteria.Articulo.csEstructuraArticulo;
 
 namespace ApiRestFerreteria.Articulo
 {
@@ -46,26 +48,36 @@ namespace ApiRestFerreteria.Articulo
 
 
 
-        public csEstructuraArticulo.responseArticulo obtenerArticulos()
+        public List<ArticulosModel> obtenerArticulos()
         {
-            var result = new csEstructuraArticulo.responseArticulo();
-            using (SqlConnection con = new SqlConnection(conexion))
+            List<ArticulosModel> articulos = new List<ArticulosModel>(); //Esto crea una lista para guardar los articulos de la bd
+            string connectionString = "Data Source=localhost;Initial Catalog=FerreteriaDB;Integrated Security=True;"; //Cambiar el Data Source por la direccion de la maquina
+
+            using (SqlConnection conn = new SqlConnection(connectionString))//Conexion a la base de datos
             {
-                try
+                SqlCommand cmd = new SqlCommand("ObtenerArticulos", conn); //Reemplazar Obtener Articulos por el nombre del sp
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read()) //El ciclo lee los datos que envio el sp fila por fila
                 {
-                    SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Articulos", con);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-                    result.respuesta = dt.Rows.Count;
-                    result.descripcion_respuesta = "Artículos obtenidos exitosamente";
-                }
-                catch (Exception ex)
-                {
-                    result.respuesta = 0;
-                    result.descripcion_respuesta = "Ocurrió un error: " + ex.Message;
+                    articulos.Add(new ArticulosModel //Por cada fila del resultado, se crea un objeto y lo añade a la lista
+                    {
+                        IdArticulo = Convert.ToInt32(reader["IdArticulo"]),
+                        CodeArticulo = Convert.ToInt32(reader["CodeArticulo"]),
+                        NombreArticulo = reader["NombreArticulo"].ToString(),
+                        Precio = Convert.ToDecimal(reader["Precio"]),
+                        Stock = Convert.ToInt32(reader["Stock"]),
+                        Descripcion = reader["Descripcion"].ToString(),
+                        IdCategoria = Convert.ToInt32(reader["IdCategoria"]),
+                        IdProveedor = Convert.ToInt32(reader["IdProveedor"])
+                    });
                 }
             }
-            return result;
+
+            return articulos;
         }
 
         //Captura lo que el sp devuelve como resultado explicito
