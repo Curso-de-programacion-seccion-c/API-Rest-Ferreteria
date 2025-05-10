@@ -22,6 +22,7 @@ namespace ApiRestFerreteria.Articulo
         {
             public int respuesta { get; set; }
             public string descripcion_respuesta { get; set; }
+            
         }
 
         public class articulo
@@ -40,5 +41,18 @@ namespace ApiRestFerreteria.Articulo
             public List<articulo> articulos { get; set; }
             public DataTable listaArticulos { get; set; }
         }
+
+        public class ArticulosModel
+        {
+            public int IdArticulo { get; set; }
+            public int CodeArticulo { get; set; }
+            public string NombreArticulo { get; set; }
+            public decimal Precio { get; set; }
+            public int Stock { get; set; }
+            public string Descripcion { get; set; }
+            public int IdCategoria { get; set; }
+            public int IdProveedor { get; set; }
+        }
+
     }
 }
