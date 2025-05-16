@@ -104,7 +104,9 @@ namespace ApiRestFerreteria.Data
                             detalleVenta.IdArticulo = reader.GetInt16(2);
                             detalleVenta.Cantidad = reader.GetInt16(3);
                             detalleVenta.NombreArticulo = reader.GetString(4);
-                            detalleVenta.FechaFactura = reader.GetDateTime(5);
+                            detalleVenta.PrecioUnitario = reader.GetDecimal(5);
+                            detalleVenta.FechaFactura = reader.GetDateTime(6);
+                            detalleVenta.NombreCliente = reader.GetString(7);
                         }
                     }
                 }
