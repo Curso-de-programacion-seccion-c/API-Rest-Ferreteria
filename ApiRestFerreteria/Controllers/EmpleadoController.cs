@@ -9,6 +9,7 @@ using System.Web.Http;
 
 namespace ApiRestFerreteria.Controllers
 {
+
     public class EmpleadoController : ApiController
     {
 
@@ -44,7 +45,7 @@ namespace ApiRestFerreteria.Controllers
 
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/empleados/{id}")]
-        public IHttpActionResult GetEmpleado(byte id)
+        public IHttpActionResult GetEmpleado(int id)
         {
             var response = _repo.GetEmpleado(id);
 
