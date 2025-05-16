@@ -77,7 +77,7 @@ namespace ApiRestFerreteria.Data
             }
         }
 
-        public ApiResponse<EmpleadoDB> GetEmpleado(byte id)
+        public ApiResponse<EmpleadoDB> GetEmpleado(int id)
         {
             try
             {
