@@ -40,7 +40,7 @@ namespace ApiRestFerreteria.Controllers
             });
         }
 
-        [System.Web.Http.HttpGet]
+        [System.Web.Http.HttpPost]
         [System.Web.Http.Route("FacturaPorFecha")]
         public IHttpActionResult GetFacturaByFecha([FromBody] Models.ReportesFacturas.RequestReporteFecha requestReporteFecha)
         {
