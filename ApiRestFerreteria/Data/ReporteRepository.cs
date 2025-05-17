@@ -47,8 +47,14 @@ namespace ApiRestFerreteria.Data
                             factura.RolDelEmpleado = reader.GetString(13);
                             factura.NombreFormaPago = reader.GetString(14);
                             factura.IdDetalleVenta = reader.GetInt32(15);
-                            factura.NombreArticulo = reader.GetString(16);
-                            factura.Cantidad = reader.GetInt16(17);
+                            factura.IdArticulo = reader.GetInt16(16);
+                            factura.NombreArticulo = reader.GetString(17);
+                            factura.PrecioUnitario = reader.GetDecimal(18);
+                            factura.Cantidad = reader.GetInt16(19);
+                            factura.Subtotal = reader.GetDecimal(20);
+                            factura.PrecioSinIVA = reader.GetDecimal(21);
+                            factura.IVA = reader.GetDecimal(22);
+
 
                             facturasDetalle.Add(factura);
                         }
