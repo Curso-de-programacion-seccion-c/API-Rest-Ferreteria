@@ -29,7 +29,7 @@ namespace ApiRestFerreteria.Controllers
         }
 
         [HttpGet]
-        [Route("rest/api/ObtenerUsuarioPorId")]
+        [Route("rest/api/ObtenerUsuarioPorId/{id}")]
         public IHttpActionResult ObtenerUsuario(int id)
         {
             return Ok(new Data.Usuario().ObtenerUsuarioPorId(id));
@@ -51,7 +51,7 @@ namespace ApiRestFerreteria.Controllers
         }
 
         [HttpDelete]
-        [Route("rest/api/EliminarUsuario")]
+        [Route("rest/api/EliminarUsuario/{id}")]
         public IHttpActionResult EliminarUsuario(int id)
         {
             return Ok(new Data.Usuario().EliminarUsuario(id));
